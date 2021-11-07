@@ -1,7 +1,7 @@
 extends Node
 
 var network = NetworkedMultiplayerENet.new()
-var port = 5500
+var port = 50000
 var max_players = 100
 
 func _ready():
@@ -12,7 +12,7 @@ func start_server():
 	network.create_server(port, max_players)
 	get_tree().set_network_peer(network)
 	print("Server started")
-	network.set_bind_ip("157.90.184.184")
+	#network.set_bind_ip("157.90.184.184")
 	network.connect("peer_connected", self, "_Peer_Connect")
 	network.connect("peer_disconnected", self, "_Peer_Disconnect")
 	

@@ -10,13 +10,9 @@ config_version=4
 
 [application]
 
-config/name="BugWarsClient"
-run/main_scene="res://Scenes/BugWars.tscn"
+config/name="BugWarsUDPClient"
+run/main_scene="res://Scenes/Client.tscn"
 config/icon="res://icon.png"
-
-[autoload]
-
-Server="*res://Scripts/Multiplayer/Server.gd"
 
 [physics]
 
