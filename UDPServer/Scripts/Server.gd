@@ -21,6 +21,7 @@ func _process(delta):
 	for i in range(0, peers.size()):
 		var peer = peers[i]
 		var pkt = peer.get_packet()
-		print("Accepted peer: %s:%s" % [peer.get_packet_ip(), peer.get_packet_port()])
-		print("Received data: %s" % [pkt.get_string_from_utf8()])
-		peer.put_packet(pkt)
+		if len(pkt.get_string_from_utf8()) > 0: 
+			print("Accepted peer: %s:%s" % [peer.get_packet_ip(), peer.get_packet_port()])
+			print("Received data: %s" % [pkt.get_string_from_utf8()])
+			peer.put_packet(pkt)
