@@ -13,3 +13,5 @@ func _process(delta):
 	if udp.get_available_packet_count() > 0:
 		print("Connected: %s" % udp.get_packet().get_string_from_utf8())
 		connected = true
+		
+	udp.put_packet("The answer is... 42!".to_utf8())

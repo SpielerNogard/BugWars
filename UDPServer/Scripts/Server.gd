@@ -19,4 +19,8 @@ func _process(delta):
 		peers.append(peer)
 
 	for i in range(0, peers.size()):
-		pass # Do something with the connected peers.
+		var peer = peers[i]
+		var pkt = peer.get_packet()
+		print("Accepted peer: %s:%s" % [peer.get_packet_ip(), peer.get_packet_port()])
+		print("Received data: %s" % [pkt.get_string_from_utf8()])
+		peer.put_packet(pkt)
