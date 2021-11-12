@@ -5,15 +5,23 @@ var rng = RandomNumberGenerator.new()
 var game_scene = load("res://Scenes/Game.tscn")
 var peers = []
 var queue = []
+var counter = 0
 func _ready():
 	server.listen(4242)
+	print("server ready")
 
+func send_data_to_game(peer, data):
+	get_tree().call_group("games", "check_data", peer, data)
+		
 func check_data(data, ip, port, peer):
 	var pkt = ""
 	var player = [ip, port, peer]
 	if data == "queue":
 		queue.append(player)
-		
+	elif data == "stop":
+		peers.remove(peer)
+	else:
+		send_data_to_game(peer,data)	
 	return pkt
 
 func check_for_new_connections():
@@ -38,9 +46,10 @@ func check_for_new_data():
 
 func create_game(player1, player2):
 	var instance = game_scene.instance()
-	instance.player1 = player1
-	instance.player2 = player2
+	instance.set_player1(player1)
+	instance.set_player2(player2)
 	add_child(instance)
+	instance.add_to_group("games")
 					
 func queue_players():
 	if len(queue) >=2:
@@ -52,10 +61,30 @@ func queue_players():
 		queue.erase(player1)
 		queue.erase(player2)
 		create_game(player1 ,player2)	
-		
+
+func update_data_ui():
+	var number_of_games = get_tree().get_nodes_in_group("games").size()	
+	var number_of_connected_players = peers.size()
+	var number_of_players_in_queue = queue.size()		
+	
+	var label_player = get_node("Control/HBoxContainer/VBoxContainer/value_con_players")
+	var label_queue = get_node("Control/HBoxContainer/VBoxContainer/value_queue")
+	var label_games = get_node("Control/HBoxContainer/VBoxContainer/value_games")
+	
+	label_player.set_text(str(number_of_connected_players))
+	label_queue.set_text(str(number_of_players_in_queue))
+	label_games.set_text(str(number_of_games))
+	if counter == 1000:
+		print("connected Players: "+str(number_of_connected_players))
+		print("Players in queue: "+str(number_of_players_in_queue))
+		print("running Games: "+str(number_of_games))
+		counter = 0
 		
 func _process(delta):
+	counter +=1
 	server.poll() # Important!
 	check_for_new_connections()
 	check_for_new_data()
+	queue_players()
+	update_data_ui()
 	

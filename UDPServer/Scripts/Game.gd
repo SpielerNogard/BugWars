@@ -1,18 +1,31 @@
 extends Node
 
-var player1 = []
-var player2 = []
+var player1 = null
+var player1_ip = null
+var player1_port = null
+var player1_peer = null 
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
+var player2 = null
+var player2_ip = null
+var player2_port = null
+var player2_peer = null
 
+func check_data(peer, data):
+	if peer == player1_peer or peer == player2_peer:
+		pass
 
-# Called when the node enters the scene tree for the first time.
+func set_player1(player):
+	player1 = player
+	player1_ip = player[0]
+	player1_port = player[1]
+	player1_peer = player[2]
+
+func set_player2(player):
+	player2 = player
+	player2_ip = player[0]
+	player2_ip = player[1]
+	player2_peer = player[2]
+
 func _ready():
 	pass # Replace with function body.
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass

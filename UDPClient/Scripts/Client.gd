@@ -2,9 +2,10 @@ extends Spatial
 
 var udp := PacketPeerUDP.new()
 var connected = false
-
+var ip = "0.0.0.0"
+#var ip = "157.90.184.184"
 func _ready():
-	udp.connect_to_host("157.90.184.184", 4242)
+	udp.connect_to_host(ip, 4242)
 
 func _process(delta):
 	if !connected:
