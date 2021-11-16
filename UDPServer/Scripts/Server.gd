@@ -14,12 +14,15 @@ func send_data_to_game(peer, data):
 	get_tree().call_group("games", "check_data", peer, data)
 		
 func check_data(data, ip, port, peer):
+	print(data)
 	var pkt = ""
 	var player = [ip, port, peer]
-	if data == "queue":
-		queue.append(player)
-	elif data == "stop":
+	if data['messagetype'] == "stop":
 		peers.remove(peer)
+	elif data['messagetype'] == "connect":
+		peer.put_packet("success".to_utf8())
+	elif data['messagetype'] == "queue":
+		queue.append(player)
 	else:
 		send_data_to_game(peer,data)	
 	return pkt
@@ -41,6 +44,7 @@ func check_for_new_data():
 			var ip = peer.get_packet_ip()
 			var port = peer.get_packet_port()
 			var data = pkt.get_string_from_utf8()
+			data = data.parse_json()
 			var pkt_ret = check_data(data,ip,port, peer) 
 			peer.put_packet(pkt)	
 
