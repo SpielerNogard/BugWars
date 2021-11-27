@@ -2,12 +2,13 @@ extends Node
 
 var udp := PacketPeerUDP.new()
 var connected = false
-var ip = "0.0.0.0"
+var ip = "192.168.2.116"
 #var ip = "157.90.184.184"
+var test = JSONParseResult.new()
 
 func send_message(message):
-	if connected == true:
-		udp.put_packet(message.to_utf8())	
+	var new_message = JSON.print(message)
+	udp.put_packet(new_message.to_utf8())	
 		
 func _connect_to_server():
 	if !connected:
@@ -15,9 +16,6 @@ func _connect_to_server():
 			"messagetype":"connect"
 		}
 		send_message(message)
-	if udp.get_available_packet_count() > 0:
-		if udp.get_packet().get_string_from_utf8() == "success":
-					connected = true
 
 func _disconnect_from_server():
 	var message = {
@@ -42,6 +40,19 @@ func _queue(my_cards):
 	}
 	send_message(message)
 
+func _get_data():
+	var data
+	if udp.get_available_packet_count() > 0:
+		data = udp.get_packet().get_string_from_utf8()
+		if data == "success":
+			connected = true
+		else:
+			data = parse_json(data)
+			
+			if data["messagetype"] == "game":
+				return data
+
+
 func _get_game_data():
 	if connected == true:
 		if udp.get_available_packet_count() > 0:
@@ -63,5 +74,4 @@ func _get_game_data():
 func _ready():
 	udp.connect_to_host(ip, 4242)
 	_connect_to_server()
-
 

@@ -14,12 +14,14 @@ func send_data_to_game(peer, data):
 	get_tree().call_group("games", "check_data", peer, data)
 		
 func check_data(data, ip, port, peer):
+	data = parse_json(data)
 	print(data)
 	var pkt = ""
 	var player = [ip, port, peer]
 	if data['messagetype'] == "stop":
 		peers.remove(peer)
 	elif data['messagetype'] == "connect":
+		print("connect")
 		peer.put_packet("success".to_utf8())
 	elif data['messagetype'] == "queue":
 		queue.append(player)
@@ -33,7 +35,7 @@ func check_for_new_connections():
 		var pkt = peer.get_packet()
 		print("Accepted peer: %s:%s" % [peer.get_packet_ip(), peer.get_packet_port()])
 		print("Received data: %s" % [pkt.get_string_from_utf8()])
-		peer.put_packet(pkt)
+		peer.put_packet("success".to_utf8())
 		peers.append(peer)
 
 func check_for_new_data():
@@ -41,10 +43,11 @@ func check_for_new_data():
 		var peer = peers[i]
 		var pkt = peer.get_packet()
 		if len(pkt.get_string_from_utf8()) > 0:
+			print("HEY")
 			var ip = peer.get_packet_ip()
 			var port = peer.get_packet_port()
 			var data = pkt.get_string_from_utf8()
-			data = data.parse_json()
+			#data = data.parse_json()
 			var pkt_ret = check_data(data,ip,port, peer) 
 			peer.put_packet(pkt)	
 
@@ -78,7 +81,7 @@ func update_data_ui():
 	label_player.set_text(str(number_of_connected_players))
 	label_queue.set_text(str(number_of_players_in_queue))
 	label_games.set_text(str(number_of_games))
-	if counter == 1000:
+	if counter == 10000000:
 		print("connected Players: "+str(number_of_connected_players))
 		print("Players in queue: "+str(number_of_players_in_queue))
 		print("running Games: "+str(number_of_games))
